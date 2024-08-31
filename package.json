@@ -1,0 +1,39 @@
+{
+  "name": "dex-arbitrage",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
+    "lint": "eslint --ignore-path .gitignore --ext .ts src",
+    "lint:fix": "eslint --ignore-path .gitignore --ext .ts --fix src",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
+    "picocolors": "^1.0.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.4.1",
+    "@commitlint/config-conventional": "^19.4.1",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "lefthook": "^1.7.14",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.0.4"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10.7"
+  },
+  "packageManager": "npm@10.7.0"
+}

@@ -1,0 +1,24 @@
+post-merge:
+  parallel: true
+  commands:
+    dependencies:
+      run: npm install
+
+post-checkout:
+  parallel: true
+  commands:
+    dependencies:
+      run: npm install
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: "*.{ts}"
+      run: npx eslint {staged_files}
+
+commit-msg:
+  parallel: true
+  commands:
+    commitlint:
+      run: npx commitlint --edit
