@@ -2,12 +2,12 @@ import { Table } from 'console-table-printer';
 import picocolors from 'picocolors';
 
 import { WETH_TOKEN } from './config';
-import { CoinpaprikaRepository, SushiSwapRepository } from './repositories';
+import { CoinpaprikaRepository, SushiSwapRepository, UniswapRepository } from './repositories';
 import { TokenRepository } from './repositories/token';
 import { formatUSDPrice, logger } from './utils';
 
 const main = async () => {
-  logger.wait('Fetching SushiSwap WETH quotes...');
+  logger.wait('Fetching onchain WETH quotes...');
   const wethPrice = await CoinpaprikaRepository.getUSDPrice(WETH_TOKEN.address);
   logger.info(picocolors.yellow(`1 ${WETH_TOKEN.symbol} = $${wethPrice.toFixed(2)}`));
 
@@ -17,21 +17,30 @@ const main = async () => {
     columns: [
       { name: 'Symbol', alignment: 'left', color: 'blue' },
       { name: 'Contract', alignment: 'left', color: 'cyan' },
-      { name: 'WETH', alignment: 'right', color: 'yellow' },
+      { name: 'Sushi', alignment: 'right', color: 'yellow' },
+      { name: 'Uni', alignment: 'right', color: 'yellow' },
       { name: 'USD', alignment: 'right', color: 'green' },
+      { name: 'Diff', alignment: 'right', color: 'red' },
     ],
   });
 
   await Promise.all(
     tokens.map(async (token) => {
-      const quote = await SushiSwapRepository.getExchangeRate(token.address, WETH_TOKEN.address);
-      const usdPrice = quote * wethPrice;
+      const [sushiQuote, uniQuote] = await Promise.all([
+        SushiSwapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
+        UniswapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
+      ]);
+
+      const usd = ((sushiQuote + uniQuote) / 2) * wethPrice;
+      const diff = (Math.abs(sushiQuote - uniQuote) / ((sushiQuote + uniQuote) / 2)) * 100;
 
       table.addRow({
         Symbol: token.symbol,
         Contract: token.address,
-        WETH: quote.toFixed(9),
-        USD: formatUSDPrice(usdPrice),
+        Sushi: `${sushiQuote.toFixed(9)} WETH`,
+        Uni: `${uniQuote.toFixed(9)} WETH`,
+        USD: formatUSDPrice(usd),
+        Diff: `${diff.toFixed(2)}%`,
       });
     }),
   );
