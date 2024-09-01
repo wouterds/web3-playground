@@ -1,21 +1,22 @@
 import { ethers } from 'ethers';
 
+import { ERC20_ABI } from '~/abi';
 import { DEX_CONTRACTS } from '~/config';
 import { getProvider } from '~/utils/web3';
 
-import { ERC20_ABI, FACTORY_ABI, PAIR_ABI } from './abi';
+import { V2_FACTORY_ABI, V2_PAIR_ABI } from './abi';
 import { SushiSwapPairDoesNotExistError } from './errors';
 
 const getExchangeRate = async (baseTokenAddress: string, quoteTokenAddress: string) => {
   const provider = getProvider();
-  const factory = new ethers.Contract(DEX_CONTRACTS.SUSHISWAP_V2, FACTORY_ABI, provider);
+  const factory = new ethers.Contract(DEX_CONTRACTS.SUSHISWAP_V2, V2_FACTORY_ABI, provider);
 
   const pairAddress = await factory.getPair(baseTokenAddress, quoteTokenAddress);
   if (pairAddress === ethers.constants.AddressZero) {
     throw new SushiSwapPairDoesNotExistError(`${baseTokenAddress}-${quoteTokenAddress}`);
   }
 
-  const pair = new ethers.Contract(pairAddress, PAIR_ABI, provider);
+  const pair = new ethers.Contract(pairAddress, V2_PAIR_ABI, provider);
   const [token0, token1, [reserve0, reserve1]] = await Promise.all([
     pair.token0(),
     pair.token1(),
