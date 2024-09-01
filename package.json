@@ -4,6 +4,7 @@
   "scripts": {
     "scan-dex-tokens": "ts-node -r tsconfig-paths/register src/scripts/scan-dex-tokens.ts",
     "ens-to-address": "ts-node -r tsconfig-paths/register src/scripts/ens-to-address.ts",
+    "scan-pending-transactions": "ts-node -r tsconfig-paths/register src/scripts/scan-pending-transactions.ts",
     "lint": "eslint --ignore-path .gitignore --ext .ts src",
     "lint:fix": "eslint --ignore-path .gitignore --ext .ts --fix src",
     "typecheck": "tsc --noEmit"
