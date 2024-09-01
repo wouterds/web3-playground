@@ -5,17 +5,20 @@ import { DEX_CONTRACTS } from '~/config';
 import { getProvider } from '~/utils/web3';
 
 import { V2_FACTORY_ABI, V2_PAIR_ABI } from './abi';
-import { SushiSwapPairDoesNotExistError } from './errors';
+import { UniswapPairDoesNotExistError } from './errors';
 
-export { SushiSwapPairDoesNotExistError } from './errors';
+export { UniswapPairDoesNotExistError } from './errors';
 
-const getExchangeRate = async (baseTokenAddress: string, quoteTokenAddress: string) => {
+export const getUniswapExchangeRate = async (
+  baseTokenAddress: string,
+  quoteTokenAddress: string,
+) => {
   const provider = getProvider();
-  const factory = new ethers.Contract(DEX_CONTRACTS.SUSHISWAP_V2, V2_FACTORY_ABI, provider);
+  const factory = new ethers.Contract(DEX_CONTRACTS.UNISWAP_V2, V2_FACTORY_ABI, provider);
 
   const pairAddress = await factory.getPair(baseTokenAddress, quoteTokenAddress);
   if (pairAddress === ethers.constants.AddressZero) {
-    throw new SushiSwapPairDoesNotExistError(baseTokenAddress, quoteTokenAddress);
+    throw new UniswapPairDoesNotExistError(baseTokenAddress, quoteTokenAddress);
   }
 
   const pair = new ethers.Contract(pairAddress, V2_PAIR_ABI, provider);
@@ -43,8 +46,4 @@ const getExchangeRate = async (baseTokenAddress: string, quoteTokenAddress: stri
     parseFloat(ethers.utils.formatUnits(reserve0, decimals0)) /
     parseFloat(ethers.utils.formatUnits(reserve1, decimals1))
   );
-};
-
-export const SushiSwapRepository = {
-  getExchangeRate,
 };

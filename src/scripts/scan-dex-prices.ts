@@ -3,21 +3,20 @@ import picocolors from 'picocolors';
 
 import { WETH_TOKEN } from '~/config';
 import {
-  CoinpaprikaRepository,
+  formatUSDPrice,
+  getSushiSwapExchangeRate,
+  getTokens,
+  getUniswapExchangeRate,
+  getUSDPrice,
+  logger,
   SushiSwapPairDoesNotExistError,
-  SushiSwapRepository,
-  TokenRepository,
   UniswapPairDoesNotExistError,
-  UniswapRepository,
-} from '~/repositories';
-import { formatUSDPrice, logger } from '~/utils';
+} from '~/utils';
 
 const main = async () => {
   logger.wait('Fetching onchain WETH quotes...');
-  const wethPrice = await CoinpaprikaRepository.getUSDPrice(WETH_TOKEN.address);
+  const wethPrice = await getUSDPrice(WETH_TOKEN.address);
   logger.info(picocolors.yellow(`1 ${WETH_TOKEN.symbol} = $${wethPrice.toFixed(2)}`));
-
-  const tokens = TokenRepository.getAll();
 
   const table = new Table({
     columns: [
@@ -31,11 +30,11 @@ const main = async () => {
   });
 
   await Promise.all(
-    tokens.map(async (token) => {
+    getTokens().map(async (token) => {
       try {
         const [sushiQuote, uniQuote] = await Promise.all([
-          SushiSwapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
-          UniswapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
+          getSushiSwapExchangeRate(token.address, WETH_TOKEN.address),
+          getUniswapExchangeRate(token.address, WETH_TOKEN.address),
         ]);
 
         const usd = ((sushiQuote + uniQuote) / 2) * wethPrice;
