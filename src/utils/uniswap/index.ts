@@ -14,7 +14,7 @@ export const getUniswapExchangeRate = async (
   quoteTokenAddress: string,
 ) => {
   const provider = getProvider();
-  const factory = new ethers.Contract(DEX_CONTRACTS.UNISWAP_V2, V2_FACTORY_ABI, provider);
+  const factory = new ethers.Contract(DEX_CONTRACTS.UNISWAP_V2_FACTORY, V2_FACTORY_ABI, provider);
 
   const pairAddress = await factory.getPair(baseTokenAddress, quoteTokenAddress);
   if (pairAddress === ethers.constants.AddressZero) {
