@@ -13,7 +13,7 @@ const getExchangeRate = async (baseTokenAddress: string, quoteTokenAddress: stri
 
   const pairAddress = await factory.getPair(baseTokenAddress, quoteTokenAddress);
   if (pairAddress === ethers.constants.AddressZero) {
-    throw new UniswapPairDoesNotExistError(`${baseTokenAddress}-${quoteTokenAddress}`);
+    throw new UniswapPairDoesNotExistError(baseTokenAddress, quoteTokenAddress);
   }
 
   const pair = new ethers.Contract(pairAddress, V2_PAIR_ABI, provider);
