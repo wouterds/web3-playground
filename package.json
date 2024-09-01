@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "console-table-printer": "^2.12.1",
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
     "picocolors": "^1.0.1"
