@@ -1,12 +1,16 @@
 import { Table } from 'console-table-printer';
 import picocolors from 'picocolors';
 
-import { WETH_TOKEN } from './config';
-import { CoinpaprikaRepository, SushiSwapRepository, UniswapRepository } from './repositories';
-import { SushiSwapPairDoesNotExistError } from './repositories/sushiswap/errors';
-import { TokenRepository } from './repositories/token';
-import { UniswapPairDoesNotExistError } from './repositories/uniswap/errors';
-import { formatUSDPrice, logger } from './utils';
+import { WETH_TOKEN } from '~/config';
+import {
+  CoinpaprikaRepository,
+  SushiSwapPairDoesNotExistError,
+  SushiSwapRepository,
+  TokenRepository,
+  UniswapPairDoesNotExistError,
+  UniswapRepository,
+} from '~/repositories';
+import { formatUSDPrice, logger } from '~/utils';
 
 const main = async () => {
   logger.wait('Fetching onchain WETH quotes...');

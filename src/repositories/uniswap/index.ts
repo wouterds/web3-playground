@@ -7,6 +7,8 @@ import { getProvider } from '~/utils/web3';
 import { V2_FACTORY_ABI, V2_PAIR_ABI } from './abi';
 import { UniswapPairDoesNotExistError } from './errors';
 
+export { UniswapPairDoesNotExistError } from './errors';
+
 const getExchangeRate = async (baseTokenAddress: string, quoteTokenAddress: string) => {
   const provider = getProvider();
   const factory = new ethers.Contract(DEX_CONTRACTS.UNISWAP_V2, V2_FACTORY_ABI, provider);
