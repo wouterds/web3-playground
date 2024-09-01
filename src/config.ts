@@ -25,4 +25,10 @@ export const TOKENS: Token[] = [
   { symbol: 'FTM', address: '0x4E15361FD6b4BB609Fa63C81A2be19d873717870' },
   { symbol: 'CREAM', address: '0x2ba592F78dB6436527729929AAf6c908497cB200' },
   { symbol: 'COMP', address: '0xc00e94Cb662C3520282E6f5717214004A7f26888' },
+  { symbol: 'PEPE', address: '0x6982508145454ce325ddbe47a25d4ec3d2311933' },
+  { symbol: 'BONK', address: '0x1151CB3d861920e07a38e03eEAd12C32178567F6' },
+  { symbol: 'SHIB', address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce' },
+  { symbol: 'FLOKI', address: '0xcf0c122c6b73ff809c693db761e7baebe62b6a2e' },
+  { symbol: 'TURBO', address: '0xa35923162c49cf95e6bf26623385eb431ad920d3' },
+  { symbol: 'TRUMP', address: '0x576e2BeD8F7b46D34016198911Cdf9886f78bea7' },
 ];

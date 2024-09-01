@@ -3,7 +3,9 @@ import picocolors from 'picocolors';
 
 import { WETH_TOKEN } from './config';
 import { CoinpaprikaRepository, SushiSwapRepository, UniswapRepository } from './repositories';
+import { SushiSwapPairDoesNotExistError } from './repositories/sushiswap/errors';
 import { TokenRepository } from './repositories/token';
+import { UniswapPairDoesNotExistError } from './repositories/uniswap/errors';
 import { formatUSDPrice, logger } from './utils';
 
 const main = async () => {
@@ -26,22 +28,31 @@ const main = async () => {
 
   await Promise.all(
     tokens.map(async (token) => {
-      const [sushiQuote, uniQuote] = await Promise.all([
-        SushiSwapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
-        UniswapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
-      ]);
+      try {
+        const [sushiQuote, uniQuote] = await Promise.all([
+          SushiSwapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
+          UniswapRepository.getExchangeRate(token.address, WETH_TOKEN.address),
+        ]);
 
-      const usd = ((sushiQuote + uniQuote) / 2) * wethPrice;
-      const diff = (Math.abs(sushiQuote - uniQuote) / ((sushiQuote + uniQuote) / 2)) * 100;
+        const usd = ((sushiQuote + uniQuote) / 2) * wethPrice;
+        const diff = (Math.abs(sushiQuote - uniQuote) / ((sushiQuote + uniQuote) / 2)) * 100;
 
-      table.addRow({
-        Symbol: token.symbol,
-        Contract: token.address,
-        Sushi: `${sushiQuote.toFixed(9)} WETH`,
-        Uni: `${uniQuote.toFixed(9)} WETH`,
-        USD: formatUSDPrice(usd),
-        Diff: `${diff.toFixed(2)}%`,
-      });
+        table.addRow({
+          Symbol: token.symbol,
+          Contract: token.address,
+          Sushi: `${sushiQuote.toFixed(9)} WETH`,
+          Uni: `${uniQuote.toFixed(9)} WETH`,
+          USD: formatUSDPrice(usd),
+          Diff: `${diff.toFixed(2)}%`,
+        });
+      } catch (e) {
+        if (
+          e instanceof UniswapPairDoesNotExistError ||
+          e instanceof SushiSwapPairDoesNotExistError
+        ) {
+          logger.warn(e.message);
+        }
+      }
     }),
   );
 
