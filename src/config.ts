@@ -11,8 +11,8 @@ export const WETH_TOKEN: Token = {
   symbol: 'WETH',
 };
 
-export const DEX_ADDRESSES = {
-  SUSHISWAP: '0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac',
+export const DEX_CONTRACTS = {
+  SUSHISWAP_V2: '0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac',
 };
 
 export const TOKENS: Token[] = [
