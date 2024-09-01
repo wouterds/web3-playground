@@ -2,7 +2,7 @@
   "name": "@wouterds/web3-playground",
   "version": "0.1.0",
   "scripts": {
-    "scan-dex-prices": "ts-node -r tsconfig-paths/register src/scripts/scan-dex-prices.ts",
+    "scan-dex-tokens": "ts-node -r tsconfig-paths/register src/scripts/scan-dex-tokens.ts",
     "lint": "eslint --ignore-path .gitignore --ext .ts src",
     "lint:fix": "eslint --ignore-path .gitignore --ext .ts --fix src",
     "typecheck": "tsc --noEmit"
