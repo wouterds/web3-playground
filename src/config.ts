@@ -4,7 +4,8 @@ import { Token } from './types';
 
 dotenv.config();
 
-export const INFURA_URL = process.env.INFURA_URL;
+export const INFURA_URL = `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`;
+export const INFURA_WS_URL = `wss://mainnet.infura.io/ws/v3/${process.env.INFURA_API_KEY}`;
 
 export const WETH_TOKEN: Token = {
   address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
