@@ -1,13 +1,11 @@
 {
-  "name": "dex-arbitrage",
-  "version": "1.0.0",
-  "main": "dist/index.js",
+  "name": "@wouterds/web3-playground",
+  "version": "0.1.0",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/index.ts",
     "lint": "eslint --ignore-path .gitignore --ext .ts src",
     "lint:fix": "eslint --ignore-path .gitignore --ext .ts --fix src",
-    "typecheck": "tsc --noEmit",
-    "build": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

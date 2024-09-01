@@ -1,57 +1,35 @@
 import picocolors from 'picocolors';
 
 import { WETH_TOKEN } from './config';
-import { getSushiSwapPrice } from './dexes/sushiswap';
-import { getUniswapPrice } from './dexes/uniswap';
-import { PriceInfo, TokenPair } from './types';
+import { CoinpaprikaRepository, SushiSwapRepository } from './repositories';
+import { TokenRepository } from './repositories/token';
 import { logger } from './utils/logger';
-import { calculateArbitrage } from './utils/math';
-import { getPopularTokens as getTokens } from './utils/tokens';
 
-async function findArbitrageOpportunities(pair: TokenPair, amountIn: number) {
-  const tokenSymbol = picocolors.blue(pair.token1.symbol.padEnd(6));
-  const tokenAddress = picocolors.cyan(pair.token1.address.padEnd(43));
+const main = async () => {
+  const start = Date.now();
+  logger.wait('Fetching WETH USD price...');
+  const wethPrice = await CoinpaprikaRepository.getUSDPrice(WETH_TOKEN.address);
+  logger.info(picocolors.yellow(`1 ${WETH_TOKEN.symbol} = $${wethPrice.toFixed(2)}`));
 
-  try {
-    const prices: PriceInfo[] = await Promise.all([
-      getUniswapPrice(pair, amountIn),
-      getSushiSwapPrice(pair, amountIn),
-    ]);
+  logger.wait('Fetching Sushiswap WETH quotes for tokens...');
+  const tokens = TokenRepository.getAll();
 
-    const arbitragePercentage = calculateArbitrage(prices);
-    const formattedArbitrage = (arbitragePercentage * 100).toFixed(2);
+  await Promise.all(
+    tokens.map(async (token) => {
+      const tokenSymbol = picocolors.blue(token.symbol.padEnd(6));
+      const tokenAddress = picocolors.cyan(token.address.padEnd(42));
+      const quote = await SushiSwapRepository.getExchangeRate(token.address, WETH_TOKEN.address);
+      const usdPrice = quote * wethPrice;
 
-    const uniswapPrice = picocolors.yellow(prices[0].price.toFixed(6).padEnd(12));
-    const sushiSwapPrice = picocolors.yellow(prices[1].price.toFixed(6).padEnd(12));
-    const arbitrage = picocolors.green(formattedArbitrage.padStart(4) + '%');
+      logger.event(
+        `${tokenSymbol} ${tokenAddress} ${picocolors.yellow(`${quote.toFixed(8)} ${WETH_TOKEN.symbol}`)} ${picocolors.green(`$${usdPrice.toFixed(2)}`)}`,
+      );
+    }),
+  );
 
-    const logMessage = `${tokenSymbol} ${tokenAddress} Uniswap: ${uniswapPrice} SushiSwap: ${sushiSwapPrice} Arbitrage: ${arbitrage}`;
-
-    if (arbitragePercentage < 0.002) {
-      logger.error(logMessage);
-    } else if (arbitragePercentage < 0.01) {
-      logger.warn(logMessage);
-    } else {
-      logger.event(logMessage);
-    }
-  } catch (_error) {
-    logger.error(`${tokenSymbol} ${tokenAddress}`);
-  }
-}
-
-async function main() {
-  const ETH_AMOUNT = 0.25;
-  const tokens = await getTokens();
-
-  logger.wait(picocolors.white('Checking arbitrage opportunities:'));
-  for (const token of tokens) {
-    const pair: TokenPair = {
-      token0: WETH_TOKEN,
-      token1: token,
-    };
-
-    await findArbitrageOpportunities(pair, ETH_AMOUNT);
-  }
-}
+  logger.info(
+    `Fetched WETH quotes for ${tokens.length} tokens in ${((Date.now() - start) / 1000).toFixed(3)}s`,
+  );
+};
 
 main().catch(logger.error);
